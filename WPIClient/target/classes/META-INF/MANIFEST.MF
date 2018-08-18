@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: Personality Insigths client
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: hrengifo
+Implementation-Vendor-Id: com.calceteam
+Build-Jdk: 1.8.0_151
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/WPIClient
+Created-By: Maven Integration for Eclipse
+
