@@ -2,7 +2,9 @@ package com.calceteam.WPIClient.User;
 
 import java.io.Serializable;
 
-public class WPIUser implements Serializable {
+import com.calceteam.WPIClient.model.BaseJsonObject;
+
+public class WPIUser extends BaseJsonObject implements Serializable {
 
 	private static final long serialVersionUID = -7109427582891420871L;
 	private String user;
@@ -19,6 +21,7 @@ public class WPIUser implements Serializable {
 	}
 	public void setUserFacebookUUID(String userFacebookUUID) {
 		this.userFacebookUUID = userFacebookUUID;
+		this.set_id(userFacebookUUID);
 	}
 	
 	

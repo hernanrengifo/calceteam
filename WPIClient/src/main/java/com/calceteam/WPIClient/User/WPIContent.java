@@ -2,7 +2,9 @@ package com.calceteam.WPIClient.User;
 
 import java.io.Serializable;
 
-public class WPIContent implements Serializable{
+import com.calceteam.WPIClient.model.BaseJsonObject;
+
+public class WPIContent extends BaseJsonObject implements Serializable{
 	private static final long serialVersionUID = -5034001432012942671L;
 	private String userUUID;
 	private String content;
