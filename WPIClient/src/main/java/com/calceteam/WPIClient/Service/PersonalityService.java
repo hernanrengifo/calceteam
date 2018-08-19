@@ -1,9 +1,13 @@
 package com.calceteam.WPIClient.Service;
 
 
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
 
+import com.calceteam.WPIClient.User.UserService;
+import com.calceteam.WPIClient.User.WPIContent;
 import com.ibm.watson.developer_cloud.http.Response;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.personality_insights.v3.PersonalityInsights;
@@ -43,6 +47,15 @@ public class PersonalityService {
 		builder.append("Result:");
 		builder.append(srvcCallResult.getResult());
 		return builder.toString();
+	}
+	
+	@GetMapping("/Profile/{userId}")
+	String calculateProfile(@PathVariable String userId) {
+		UserService userService = new UserService();
+		List<WPIContent> content =userService.getUserContentByUser(userId);
+		
+		return "";
+		
 	}
 	
 }

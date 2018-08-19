@@ -1,13 +1,13 @@
 package com.calceteam.WPIClient.User;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +15,11 @@ import com.cloudant.client.api.ClientBuilder;
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.model.Response;
+import com.cloudant.client.api.query.QueryBuilder;
+import com.cloudant.client.api.query.QueryResult;
+
+import static com.cloudant.client.api.query.Expression.*;
+import static com.cloudant.client.api.query.Operation.*;
 
 @RestController
 @EnableAutoConfiguration
@@ -28,7 +33,7 @@ public class UserService {
 	private String cloudamt_userDB = "calceteam_wpiuser";
 	private String cloudant_contentDB = "calceteam_wpicontent";
 
-	public UserService() throws MalformedURLException {
+	public UserService() {
 		cloudantClient = ClientBuilder.account(cloudantUser)
 				.username(cloudantUser).password(cloudantPassword).build();
 	}
@@ -52,18 +57,18 @@ public class UserService {
 	}
 	
 	@PostMapping("/User")
-	String createWPIUser(WPIUser user) throws Exception {
+	String createWPIUser(@RequestBody WPIUser user) throws Exception {
 		Database db =	cloudantClient.database(cloudamt_userDB, false);
 		Response res = db.save(user);
 		
-		if(res.getStatusCode() != 200) {
+		if(res.getStatusCode() != 201) {
 			throw new Exception("error creando documento " + res.getReason());
 		}else {
 			return user.getUserFacebookUUID();
 		}
 	}
 	
-	@GetMapping("/User")
+	@GetMapping("/User/{userId}")
 	WPIUser getWPIUser(@PathVariable String userId) throws Exception {
 		Database db =	cloudantClient.database(cloudamt_userDB, false);
 		WPIUser res = db.find(WPIUser.class, userId);
@@ -71,24 +76,32 @@ public class UserService {
 	}
 	
 	@PostMapping("/Content")
-	String createUserContent(WPIContent content) throws Exception {
-		Database db =	cloudantClient.database(cloudamt_userDB, false);
+	String createUserContent(@RequestBody WPIContent content) throws Exception {
+		Database db =	cloudantClient.database(cloudant_contentDB, false);
 		Response res = db.save(content);
 		
-		if(res.getStatusCode() != 200) {
+		if(res.getStatusCode() != 201) {
 			throw new Exception("error creando documento " + res.getReason());
 		}else {
 			return content.getContentUUID();
 		}
 	}
 	
-	@GetMapping("/Content")
+	@GetMapping("/Content/{userContentId}")
 	WPIContent getUserContent(@PathVariable String userContentId) throws Exception {
-		Database db =	cloudantClient.database(cloudamt_userDB, false);
+		Database db =	cloudantClient.database(cloudant_contentDB, false);
 		WPIContent res = db.find(WPIContent.class, userContentId);
 		return res;
 	}
 	
+	@GetMapping("/Content/ByUser/{userId}")
+	public List<WPIContent> getUserContentByUser(@PathVariable String userId){
+		Database db =cloudantClient.database(cloudant_contentDB, false);
+		QueryBuilder queryBuilder = new QueryBuilder(eq("userUUID", userId));
+		QueryResult<WPIContent> result = db.query(queryBuilder.build(), WPIContent.class);
+		
+		return result.getDocs();
+	}
 	
 	
 	
