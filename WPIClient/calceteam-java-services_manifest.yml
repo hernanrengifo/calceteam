@@ -1,0 +1,13 @@
+applications:
+- name: calceteam-java-services
+  buildpack: java_buildpack
+  disk_quota: 1G
+  env:
+    SPRING_PROFILES_ACTIVE: cloud
+    JAVA_HOME: /home/vcap/app/.java-buildpack/open_jdk_jre
+    PATH: /usr/local/bin:/usr/bin:/bin:/home/vcap/app/.java-buildpack/open_jdk_jre/bin
+  instances: 1
+  memory: 768M
+  routes:
+  - route: calceteam-java-services.mybluemix.net
+  stack: cflinuxfs2
