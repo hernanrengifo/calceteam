@@ -11,6 +11,11 @@ import com.calceteam.WPIClient.User.WPIContent;
 import com.ibm.watson.developer_cloud.http.Response;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.personality_insights.v3.PersonalityInsights;
+import com.ibm.watson.developer_cloud.personality_insights.v3.model.Content;
+import com.ibm.watson.developer_cloud.personality_insights.v3.model.ContentItem;
+import com.ibm.watson.developer_cloud.personality_insights.v3.model.Profile;
+import com.ibm.watson.developer_cloud.personality_insights.v3.model.ProfileOptions;
+import com.ibm.watson.developer_cloud.personality_insights.v3.model.ProfileOptions.Builder;
 
 
 @RestController
@@ -50,11 +55,26 @@ public class PersonalityService {
 	}
 	
 	@GetMapping("/Profile/{userId}")
-	String calculateProfile(@PathVariable String userId) {
+	Profile calculateProfile(@PathVariable String userId) {
 		UserService userService = new UserService();
 		List<WPIContent> content =userService.getUserContentByUser(userId);
+		Builder profileOptionsBuilder = new ProfileOptions.Builder();
+		Content.Builder cbuilder = new Content.Builder();
+		for(WPIContent item : content) {
+			ContentItem citem = new ContentItem.Builder()
+					.content(item.getContent())
+					.forward(item.isForward()).reply(item.isReply())
+					.parentid(item.getParentContentUUID()).language(item.getLanguaje()).build();
+			cbuilder.addContentItem(citem);
+		}
+		profileOptionsBuilder.content(cbuilder.build());
+		profileOptionsBuilder.acceptLanguage("es").consumptionPreferences(true);
+		ServiceCall<Profile> profile = 
+				personalityInsights.profile(profileOptionsBuilder.build());
 		
-		return "";
+		Response<Profile> response = profile.executeWithDetails();
+		
+		return response.getResult();
 		
 	}
 	

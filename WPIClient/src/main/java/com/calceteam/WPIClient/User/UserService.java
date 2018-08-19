@@ -1,6 +1,5 @@
 package com.calceteam.WPIClient.User;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
